@@ -1,11 +1,17 @@
-SRC = fatmake.c
+include config.mk
 
-all: fatmake
+PROGRAM = fmake
 
-fatmake: $(SRC)
+SRC = $(PROGRAM).c
+
+all: $(PROGRAM)
+
+$(PROGRAM): $(SRC) config.h
 
 clean:
-	rm fatmake
+	rm $(PROGRAM)
 
 test:
-	./fatmake ENABLE_DEBUG=1
+	@./$(PROGRAM) ENABLE_DEBUG=1
+
+.PHONY: all test clean

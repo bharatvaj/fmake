@@ -1,8 +1,23 @@
-fatmake
--------
+fmake
+=====
 
 An attempt at saving developers time.
 
-fatmake is a program that brings `make`s interface to almost any build system.
+fmake is a program that brings `make`s interface to almost any build system.
 
 See this |list.txt| for the number of build systems available.
+
+
+fmake refrains from reading the source files, but does so when required like reading a version number or detecting a syntax.
+
+Every build system has ranking that is followed so that 
+autotools - 1
+cmake - 1
+make - 2 
+
+
+fmake "intelligently" knows what targets to build
+mapper files
+------------
+
+`fmake` has the analogy of mapper files which can be used to make a project.

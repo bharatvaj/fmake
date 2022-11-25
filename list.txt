@@ -1,0 +1,17 @@
+Supported build files
+---------------------
+
+* .sln
+* .xcrun
+
+* cmake
+
+* gmake
+* bmake
+* nmake
+
+* bazel
+* gradle
+* meson
+
+* autotools

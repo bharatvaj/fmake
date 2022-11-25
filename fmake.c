@@ -10,13 +10,18 @@
 // process the input string and convert it for the `maker`
 // output the full commands
 
+void process_build() {
+	printf("%s", maker.cmd);
+}
+
 char* process_string() {
 	char* s = (char*)malloc(256);
-	strcpy(s, "hello, wold");
 	struct stat st = {0};
-	for (int i = 0; i < sizeof(filenames); i++) {
-		if (!stat(filenames[i], &st)) {
-			printf("File detected %s", filenames[i]);
+	for (int i = 0; i < sizeof(makers); i++) {
+		const char* filename = makers[i].filename;
+		if (!stat(filename, &st)) {
+			maker = makers[i];
+			process_build();
 			break;
 		}
 	}
