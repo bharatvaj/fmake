@@ -14,18 +14,22 @@ void process_build() {
 	printf("%s %s", maker.cmd, maker.args);
 }
 
-char* process_string() {
-	char* s = (char*)malloc(256);
+void process_string() {
 	struct stat st = {0};
+	short maker_found = 0;
 	for (int i = 0; i < sizeof(makers); i++) {
 		const char* filename = makers[i].filename;
 		if (!stat(filename, &st)) {
 			maker = makers[i];
+			maker_found = 1;
 			process_build();
 			break;
 		}
 	}
-	return s;
+	if (maker_found == 0) {
+		maker = makers[FMAKE_POSIX_MAKEFILE];
+		process_build();
+	}
 }
 
 // support -- arguments for cmake and other stuff
