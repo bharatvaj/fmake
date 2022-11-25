@@ -1,21 +1,17 @@
 fmake
 =====
-
 An attempt at saving developers time.
 
 fmake is a program that brings `make`s interface to almost any build system.
 
-See this |list.txt| for the number of build systems available.
+See below for the build systems currently supported
 
-fmake refrains from reading the source files
+fmake refrains from reading the source files.
 
-
-fmake "intelligently" knows what targets to build.
-These can be configured in the config.h file.
+fmake "intelligently" knows what targets to build. These can be configured in the config.h file.
 
 USAGE
 -----
-
 To avoid complexity, fmake does not fork any process to run the commands. It just prints out the right command.
 
 `make='$(fmake)'` This should be added in your .bash_profile, .zshrc for fmake to work.
