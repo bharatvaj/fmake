@@ -9,22 +9,18 @@ void process_build() {
 	printf("%s %s", maker.cmd, maker.args);
 }
 
+struct stat st = {0};
 void process_string() {
-	struct stat st = {0};
-	short maker_found = 0;
-	for (int i = 0; i < sizeof(makers); i++) {
+	for (int i = 0; i < (sizeof(makers) / sizeof(maker_config_t)); i++) {
 		const char* filename = makers[i].filename;
 		if (!stat(filename, &st)) {
 			maker = makers[i];
-			maker_found = 1;
 			process_build();
-			break;
+			return;
 		}
 	}
-	if (maker_found == 0) {
-		maker = makers[FMAKE_POSIX_MAKEFILE];
-		process_build();
-	}
+	maker = makers[FMAKE_POSIX_MAKEFILE];
+	process_build();
 }
 
 

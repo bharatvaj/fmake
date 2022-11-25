@@ -24,11 +24,11 @@ typedef struct {
 	ARG, cmdlists[ARG]
 
 static const maker_config_t makers[] = {
-{ "configure",      FMAKE_CMAKE,          "sh",            "configure"   },
 { "Makefile",       FMAKE_POSIX_MAKEFILE, "make",          ""            },
 { "makefile",       FMAKE_POSIX_MAKEFILE, "make",          ""            },
 { "GNUMakefile",    FMAKE_GNU_MAKEFILE,   "gmake",         ""            },
 { "BSDMakefile",    FMAKE_BSD_MAKEFILE,   "bmake",         ""            },
+{ "configure",      FMAKE_CONFIGURE,      "sh",            "configure"   },
 { "CMakeLists.txt", FMAKE_CMAKE,          "cmake",         "-B out/"     },
 { "package.json",   FMAKE_NPM,            "npm",           "install"     },
 { "Cargo.toml",     FMAKE_RUST,           "cargo",         "install"     },
