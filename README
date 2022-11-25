@@ -1,0 +1,8 @@
+fatmake
+-------
+
+An attempt at saving developers time.
+
+fatmake is a program that brings `make`s interface to almost any build system.
+
+See this |list.txt| for the number of build systems available.
