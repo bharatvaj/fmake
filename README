@@ -7,22 +7,10 @@ fmake is a program that brings `make`s interface to almost any build system.
 
 See this |list.txt| for the number of build systems available.
 
-
-fmake refrains from reading the source files, but does so when required like reading a version number or detecting a syntax.
-
-Every build system has ranking that is followed so that 
-autotools - 1
-cmake - 1
-make - 2 
+fmake refrains from reading the source files
 
 
-fmake "intelligently" knows what targets to build
-
-mapper files
-------------
-
-`fmake` has the analogy of mapper files which can be used to make a project.
-
+fmake "intelligently" knows what targets to build.
 These can be configured in the config.h file.
 
 USAGE
@@ -33,3 +21,12 @@ To avoid complexity, fmake does not fork any process to run the commands. It jus
 `make='$(fmake)'` This should be added in your .bash_profile, .zshrc for fmake to work.
 
 When none is found, it just defaults to the `make` in $PATH
+
+Supported build files
+---------------------
+* *make
+* bazel
+* cmake
+* configure
+* gradle
+* Much more to be added soon
