@@ -24,11 +24,11 @@ static const char* cmdlists[] = {
 	ARG, cmdlists[ARG]
 
 static const maker_config_t makers[] = {
-	{ "Makefile",    FMAKE_POSIX_MAKEFILE, "make" },
-	{ "makefile",    FMAKE_POSIX_MAKEFILE, "make" },
-	{ "GNUMakefile", FMAKE_GNU_MAKEFILE, "gmake"   },
-	{ "BSDMakefile", FMAKE_BSD_MAKEFILE, "bmake"   },
-	{ "CMakeLists.txt", FMAKE_CMAKE, "cmake"   },
+	{ "Makefile",       FMAKE_POSIX_MAKEFILE, "make", ""        },
+	{ "makefile",       FMAKE_POSIX_MAKEFILE, "make", ""        },
+	{ "GNUMakefile",    FMAKE_GNU_MAKEFILE,   "gmake", ""       },
+	{ "BSDMakefile",    FMAKE_BSD_MAKEFILE,   "bmake", ""       },
+	{ "CMakeLists.txt", FMAKE_CMAKE,          "cmake", "-B out/"   },
 };
 
 static int8_t *detected_indices = 0;

@@ -11,6 +11,9 @@ $(PROGRAM): $(SRC) config.h
 clean:
 	rm $(PROGRAM)
 
+install: $(PROGRAM)
+	cp $(PROGRAM) $(DESTDIR)/$(PREFIX)
+
 test:
 	@./$(PROGRAM) ENABLE_DEBUG=1
 

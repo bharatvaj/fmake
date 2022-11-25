@@ -11,7 +11,7 @@
 // output the full commands
 
 void process_build() {
-	printf("%s", maker.cmd);
+	printf("%s %s", maker.cmd, maker.args);
 }
 
 char* process_string() {
@@ -32,6 +32,6 @@ char* process_string() {
 // fmake -- --preset x86-64-apple-darwin
 
 int main(int argc, char* argv[]) {
-	printf("%s\n", process_string());
+	process_string();
 	return -1;
 }
