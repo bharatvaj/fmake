@@ -29,7 +29,7 @@ static const maker_config_t makers[] = {
 { "GNUMakefile",    FMAKE_GNU_MAKEFILE,   "gmake",         ""            },
 { "BSDMakefile",    FMAKE_BSD_MAKEFILE,   "bmake",         ""            },
 { "configure",      FMAKE_CONFIGURE,      "sh",            "configure"   },
-{ "CMakeLists.txt", FMAKE_CMAKE,          "cmake",         "-B out/"     },
+{ "CMakeLists.txt", FMAKE_CMAKE,          "cmake",         "."           },
 { "package.json",   FMAKE_NPM,            "npm",           "install"     },
 { "Cargo.toml",     FMAKE_RUST,           "cargo",         "install"     },
 { "setup.py",       FMAKE_PIP,            "pip",           "install ."   },
