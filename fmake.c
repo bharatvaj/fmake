@@ -5,11 +5,6 @@
 
 #include "config.h"
 
-// Two things to do
-// scan directory and pick out the maker
-// process the input string and convert it for the `maker`
-// output the full commands
-
 void process_build() {
 	printf("%s %s", maker.cmd, maker.args);
 }
@@ -32,8 +27,6 @@ void process_string() {
 	}
 }
 
-// support -- arguments for cmake and other stuff
-// fmake -- --preset x86-64-apple-darwin
 
 int main(int argc, char* argv[]) {
 	process_string();
