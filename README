@@ -14,7 +14,7 @@ USAGE
 -----
 To avoid complexity, fmake does not fork any process to run the commands. It just prints out the right command.
 
-`make='$(fmake)'` This should be added in your .bash_profile, .zshrc for fmake to work.
+`alias make='$(fmake)'` should be added in your .bash_profile, or .zshrc for fmake to work.
 
 When none is found, it just defaults to the `make` in $PATH
 
