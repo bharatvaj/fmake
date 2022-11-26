@@ -25,4 +25,5 @@ Supported build files
 * cmake
 * configure
 * gradle
+* ninja
 * Much more to be added soon
