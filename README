@@ -10,6 +10,8 @@ fmake refrains from reading the source files.
 
 fmake "intelligently" knows what targets to build. These can be configured in the config.h file.
 
+Opinionates build directory as 'out' in case of no clear build 'out' directory standard. Avoids in-source builds.
+
 USAGE
 -----
 To avoid complexity, fmake does not fork any process to run the commands. It just prints out the right command.
