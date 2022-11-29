@@ -1,4 +1,4 @@
-VERSION := 0.1.0
+VERSION := 0.1.1
 
 CFLAGS := -DFMAKE_VERSION=$(VERSION)
 PREFIX ?= usr/local/bin
