@@ -1,20 +1,18 @@
 include config.mk
 
-PROGRAM = fmake
+all: fmake
 
-SRC = $(PROGRAM).c
-
-all: $(PROGRAM)
-
-$(PROGRAM): $(SRC) config.h
+fmake: fmake.c
 
 clean:
-	rm $(PROGRAM)
+	rm -f fmake
 
-install: $(PROGRAM)
-	cp $(PROGRAM) $(DESTDIR)/$(PREFIX)
+install: fmake
+	mkdir -p $(DESTDIR)$(PREFIX)/bin 
+	cp -f fmake $(DESTDIR)$(PREFIX)/bin
+	chmod 755 $(DESTDIR)$(PREFIX)/bin/fmake
 
 test:
-	@./$(PROGRAM) ENABLE_DEBUG=1
+	@./fmake ENABLE_DEBUG=1
 
 .PHONY: all test clean
