@@ -1,14 +1,17 @@
-include config.mk
+VERSION = 0.1.3
+
+CFLAGS += -DFMAKE_VERSION=$(VERSION) -Wall -Wextra -g
+PREFIX   ?= /usr/local
 
 all: fmake
 
-fmake: fmake.c
+fmake: fmake.c config.h
 
 clean:
 	rm -f fmake
 
 install: fmake
-	mkdir -p $(DESTDIR)$(PREFIX)/bin 
+	mkdir -p $(DESTDIR)$(PREFIX)/bin
 	cp -f fmake $(DESTDIR)$(PREFIX)/bin
 	chmod 755 $(DESTDIR)$(PREFIX)/bin/fmake
 

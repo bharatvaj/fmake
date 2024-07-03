@@ -1,0 +1,21 @@
+fmake uses chains.
+
+CHAINS
+------
+Chains are created for build tools which require the user to execute multiple commands in order to execute the build.
+
+Example
+-------
+	cmake -Bout -S. -GNinja
+	cd out
+	ninja
+
+
+This can be defined in the config.txt as,
+
+FM_CMAKE->FM_NINJA
+
+Another example is confiure
+FM_AUTORECONF->FM_AUTOCONF
+FM_AUTOCONF->FM_MAKE
+

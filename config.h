@@ -1,47 +1,38 @@
-#include <stdint.h>
-
-typedef enum {
-	FMAKE_POSIX_MAKEFILE,
-	FMAKE_GNU_MAKEFILE,
-	FMAKE_BSD_MAKEFILE,
-	FMAKE_NINJA,
-	FMAKE_O_MAKEFILE,
-	FMAKE_CONFIGURE,
-	FMAKE_AUTORECONF,
-	FMAKE_CMAKE,
-	FMAKE_GN,
-	FMAKE_NPM,
-	FMAKE_RUST,
-	FMAKE_PIP,
-	FMAKE_GRADLE,
-} maker_t;
+#define BUILD_SYSTEMS \
+	X(0, "Makefile"            , "make") \
+	X(0, "makefile"            , "make") \
+	X(0, "GNUMakefile"         , "gmake") \
+	X(0, "BSDMakefile"         , "bmake") \
+	X(1, "pro"         , "qmake") \
+	X(0, "make"                , "sh"            , "make") \
+	X(0, "build.sh"            , "sh"            , "build.sh") \
+	X(0, "build.ninja"         , "ninja") \
+	X(0, "OMakefile"           , "omake") \
+	X(0, "configure"           , "sh"            , "configure") \
+	X(0, "configure.ac"        , "autoreconf"    , "-fiv") \
+	X(0, "CMakeLists.txt"      , "cmake"         , "-B"               , "out/") \
+	X(0, "BUILD.gn"            , "gn"            , "gen"              , "out/") \
+	X(0, "nob"                 , "./nob"         , "./nob") \
+	X(0, "nob.c"               , "cc"            , "cc"               , "./nob.c" , "-o"         , "nob") \
+	X(0, "nobuild"             , "./nobuild"     , ) \
+	X(0, "nobuild.c"           , "cc"            , "./nobuild.c"      , "-o"      , "nobuild") \
+	X(0, "package.json"        , "npm"           , "run") \
+	X(0, "Cargo.toml"          , "cargo"         , "build") \
+	X(0, "setup.py"            , "pip"           , "install"          , ".") \
+	X(0, "gradlew.bat"         , "./gradlew.bat" , "./gradlew.bat") \
+	X(0, "gradlew"             , "sh"            , "gradlew") \
+	X(0, "PKGBUILD"            , "makepkg"       , "-i")
 
 typedef struct {
-	const char* filename;
-	maker_t type;
-	const char* cmd;
-	const char* args;
+short check_extension;
+const char* filename;
+const char* cmd;
+const char* args[256];
 } maker_config_t;
 
 static const maker_config_t makers[] = {
-{ "Makefile",       FMAKE_POSIX_MAKEFILE, "make",          ""            },
-{ "makefile",       FMAKE_POSIX_MAKEFILE, "make",          ""            },
-{ "GNUMakefile",    FMAKE_GNU_MAKEFILE,   "gmake",         ""            },
-{ "BSDMakefile",    FMAKE_BSD_MAKEFILE,   "bmake",         ""            },
-{ "build.ninja",    FMAKE_NINJA,          "ninja",         ""            },
-{ "OMakefile",      FMAKE_O_MAKEFILE,     "omake",         ""            },
-{ "configure",      FMAKE_CONFIGURE,      "sh",            "configure"   },
-{ "configure.ac",   FMAKE_AUTORECONF,     "autoreconf",    "-i"          },
-{ "CMakeLists.txt", FMAKE_CMAKE,          "cmake",         "-B out"      },
-{ "BUILD.gn",       FMAKE_GN,             "gn",            "gen out"     },
-{ "package.json",   FMAKE_NPM,            "npm",           "install"     },
-{ "Cargo.toml",     FMAKE_RUST,           "cargo",         "install"     },
-{ "setup.py",       FMAKE_PIP,            "pip",           "install ."   },
-#ifdef _WIN32
-{ "gradlew.bat",    FMAKE_GRADLE,         "./gradlew.bat", ""            },
-#endif
-{ "gradlew",        FMAKE_GRADLE,         "sh",            "gradlew"     },
+#define X(ISEXT, LOOKFOR, CMD, ...) {ISEXT, LOOKFOR, CMD, { CMD, __VA_ARGS__} },
+BUILD_SYSTEMS
+#undef X
 };
-
-static maker_config_t maker;
 
