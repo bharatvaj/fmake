@@ -1,14 +1,16 @@
-VERSION = 0.1.3
+include config.mk
 
-CFLAGS += -DFMAKE_VERSION=$(VERSION) -Wall -Wextra -g
-PREFIX   ?= /usr/local
+SOURCE = fmake.c config.h
 
-all: fmake
+fmake.exe: $(SOURCE)
+	cl /nologo $(cl_CFLAGS) $(CFLAGS) fmake.c
 
-fmake: fmake.c config.h
+fmake: $(SOURCE)
+	$(CC) -o $@ $(_CFLAGS) $(CFLAGS) $(LDFLAGS) fmake.c
 
 clean:
-	rm -f fmake
+	-rm fmake
+	-del fmake.exe
 
 install: fmake
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
@@ -18,4 +20,4 @@ install: fmake
 test:
 	@./fmake ENABLE_DEBUG=1
 
-.PHONY: all test clean
+.PHONY: test clean

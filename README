@@ -1,27 +1,30 @@
 fmake
 =====
-An attempt at saving developers time.
+ ______________________________ 
+| > C:\AndroidApp\        - o x|
+|------------------------------|
+| $ fmake                      |
+| ++ gradle buildDebug         |
+!______________________________!
 
-fmake is a program that brings `make`s interface to almost any build system.
+A tool for the repo nomad.
 
-See below for the build systems currently supported
+fmake is a tool that brings `make`s interface to
+almost any build system.
 
-fmake refrains from reading the source files.
+fmake "intelligently" knows what targets to build which can be
+configured in the config.h file.
 
-fmake "intelligently" knows what targets to build. These can be configured in the config.h file.
+Opinionates build directory as 'out' in case of no clear build out
+directory standard. Avoids in-source builds.
 
-Opinionates build directory as 'out' in case of no clear build 'out' directory standard. Avoids in-source builds.
-
-USAGE
+Usage
 -----
 
-Just type fmake, in your project directory.
+Just type `fmake`, in your project directory to quickly run
+fmake commands.
 
-	alias m=fmake -a
-
-to quickly run fmake commands.
-
-When none is found, it just defaults to the `make` in $PATH
+When none is found, it just defaults to running `make`.
 
 Supported build files
 ---------------------
@@ -31,7 +34,16 @@ Supported build files
 * configure
 * gradle
 * ninja
-* nobuild,
-* and much more!
+* nobuild
+
+and much more! see the config.h for the complete list
 
 Find the complete list in config.h
+
+Building fmake
+--------------
+For *NIX,
+    make
+
+For MSVC,
+    nmake

@@ -1,45 +1,43 @@
-typedef enum {
-	FMAKE_FILE,
-	FMAKE_DIR,
-	FMAKE_EXT
-} file_type_t;
-
+/*   level    filetype   lookup name         cmd               cmd args */
 #define BUILD_SYSTEMS \
-	X(0 , "Makefile"       , "make") \
-	X(0 , "makefile"       , "make") \
-	X(0 , "GNUMakefile"    , "gmake") \
-	X(0 , "BSDMakefile"    , "bmake") \
-	X(2 , "pro"            , "qmake") \
-	X(0 , "make"           , "sh"               , "make") \
-	X(0 , "build.sh"       , "sh"               , "build.sh") \
-	X(0 , "build.ninja"    , "ninja") \
-	X(0 , "OMakefile"      , "omake") \
-	X(0 , "configure"      , "sh"               , "configure") \
-	X(0 , "configure.ac"   , "autoreconf"       , "-fiv") \
-	X(0 , "CMakeLists.txt" , "cmake"            , "-B"           , "out/") \
-	X(0 , "BUILD.gn"       , "gn"               , "gen"          , "out/") \
-	X(0 , "nob"            , "./nob") \
-	X(0 , "nob.c"          , "cc"               , "./nob.c"      , "-o"      , "nob") \
-	X(0 , "nobuild"        , "./nobuild"        , ) \
-	X(0 , "nobuild.c"      , "cc"               , "./nobuild.c"  , "-o"      , "nobuild") \
-	X(0 , "package.json"   , "npm"              , "install") \
-	X(1 , "node_modules"   , "npm"              , "run") \
-	X(0 , "Cargo.toml"     , "cargo"            , "build") \
-	X(0 , "setup.py"       , "pip"              , "install"      , ".") \
-	X(0 , "gradlew.bat"    , "./gradlew.bat") \
-	X(0 , "gradlew"        , "sh"               , "gradlew") \
-	X(0 , "PKGBUILD"       , "makepkg"          , "-i")
+	X( 1,     FMAKE_FIL, "Makefile"       , "make") \
+	X( 1,     FMAKE_FIL, "makefile"       , "make") \
+	X( 1,     FMAKE_FIL, "GNUMakefile"    , "gmake") \
+	X( 1,     FMAKE_FIL, "BSDMakefile"    , "bmake") \
+	X( 1,     FMAKE_FIL, "Justfile"       , "just") \
+	X( 1,     FMAKE_EXT, "*.pro"          , "qmake") \
+	X( 1,     FMAKE_EXT, "*.sln"          , "msbuild") \
+	X( 1,     FMAKE_EXT, "*.vcxproj"      , "msbuild") \
+	X( 1,     FMAKE_FIL, "make"           , "sh"               , "make") \
+	X( 1,     FMAKE_FIL, "Gruntfile"      , "grunt") \
+	X( 1,     FMAKE_FIL, "build.sh"       , "sh"               , "build.sh") \
+	X( 1,     FMAKE_FIL, "build.ninja"    , "ninja") \
+	X( 1,     FMAKE_FIL, "OMakefile"      , "omake") \
+	X( 2,     FMAKE_FIL, "configure"      , "sh"               , "configure") \
+	X( 1,     FMAKE_FIL, "configure.ac"   , "autoreconf"       , "-fiv") \
+	X( 2,     FMAKE_FIL, "CMakeLists.txt" , "cmake"            , "-B"           , "out/") \
+	X( 2,     FMAKE_FIL, "BUILD.gn"       , "gn"               , "gen"          , "out/") \
+	X( 1,     FMAKE_FIL, "BUILD"          , "bazel"            , "build") \
+	X( 1,     FMAKE_FIL, "nob"            , "./nob") \
+	X( 1,     FMAKE_FIL, "nob.c"          , "cc"               , "./nob.c"      , "-o"      , "nob") \
+	X( 1,     FMAKE_FIL, "nobuild"        , "./nobuild"        , ) \
+	X( 1,     FMAKE_FIL, "nobuild.c"      , "cc"               , "./nobuild.c"  , "-o"      , "nobuild") \
+	X( 1,     FMAKE_FIL, "packages.json"  , "npm"              , "install") \
+	X( 1,     FMAKE_DIR, "node_modules"   , "npm"              , "run") \
+	X( 1,     FMAKE_FIL, "Cargo.toml"     , "cargo"            , "build") \
+	X( 1,     FMAKE_FIL, "setup.py"       , "pip"              , "install"      , ".") \
+	X( 1,     FMAKE_FIL, "gradlew.bat"    , "./gradlew.bat") \
+	X( 1,     FMAKE_FIL, "gradlew"        , "sh"               , "gradlew") \
+	X( 3,     FMAKE_FIL, "APKBUILD"       , "abuild"           , "-r") \
+	X( 3,     FMAKE_FIL, "PKGBUILD"       , "makepkg"          , "-i")
 
-typedef struct {
-file_type_t file_type;
-const char* filename;
-const char* cmd;
-const char* args[256];
-} maker_config_t;
 
 static const maker_config_t makers[] = {
-#define X(ISEXT, LOOKFOR, CMD, ...) {ISEXT, LOOKFOR, CMD, { CMD, __VA_ARGS__} },
+#define X(MLEVEL, ISEXT, LOOKFOR, CMD, ...) {MLEVEL, ISEXT, LOOKFOR, \
+    CMD, { CMD, __VA_ARGS__}, (sizeof((char*[]){"" __VA_ARGS__}) / sizeof(char**)) },
 BUILD_SYSTEMS
 #undef X
+#undef NUMARGS
 };
 
+static const size_t makers_len = sizeof(makers) / sizeof(maker_config_t);

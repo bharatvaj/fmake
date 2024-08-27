@@ -1,4 +1,6 @@
-VERSION = 0.1.1
+VERSION = 0.1.6
 
-CPPFLAGS += -DFMAKE_VERSION=$(VERSION)
-PREFIX   ?= /usr/local
+$(CC)_CFLAGS = -DFMAKE_VERSION=\"$(VERSION)\" -Wall -Wextra -g
+cl_CFLAGS = /DFMAKE_VERSION=\"$(VERSION)\" /Zi
+
+PREFIX = /usr/local
