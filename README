@@ -7,43 +7,72 @@ fmake
 | ++ gradle buildDebug         |
 !______________________________!
 
-A tool for the repo nomad.
+fmake is a tool that brings `make`s interface to almost any build system.
 
-fmake is a tool that brings `make`s interface to
-almost any build system.
+fmake offers a functionality similar to vim's makeprg, but does so in a
+way that it can be used in various other programs and applications.
 
-fmake "intelligently" knows what targets to build which can be
+fmake "intelligently" knows what targets to build and can be
 configured in the config.h file.
-
-Opinionates build directory as 'out' in case of no clear build out
-directory standard. Avoids in-source builds.
 
 Usage
 -----
 
-Just type `fmake`, in your project directory to quickly run
-fmake commands.
+fmake [options] [target] ...
+Options:
+  -?            Prints fmake usage
+  -1|2|3        Force fmake to start from the level specified
+  -C path       Change to directory before calling the programs
+  -D            Print various types of debugging information.
+  -N            Don't actually run any build commands; just print them.
+  -V            Print the version number of make and exit.
 
-When none is found, it just defaults to running `make`.
+Build Chains
+------------
+fmake automatically understands the following(and many more) sequences,
+and tries to run it one after the other
+
+	$ cmake -Bout .
+	$ cd out
+	$ make
+
+--------(vs)----------
+
+    $ fmake    ------------------=> [ You only have to type fmake! ]
+    ++ cmake -Bout
+        ...
+    ++ cmake --build out
+
+fmake can be forced to re-run the generator using `fmake -2`
+
 
 Supported build files
 ---------------------
-* *make
-* bazel
-* cmake
-* configure
-* gradle
-* ninja
-* nobuild
-
-and much more! see the config.h for the complete list
-
-Find the complete list in config.h
+fmake queries filenames from `maker_config_t makers[]` defined in config.h.
 
 Building fmake
 --------------
-For *NIX,
-    make
+*NIX,
+        $ make
+        $ make install
 
-For MSVC,
-    nmake
+MSVC,
+        * Open Developer Command Prompt *
+        C:\fmake> nmake
+
+Additionally 'type=release' can be passed to build as release.
+Default is debug.
+
+FAQ
+----
+> Why ?
+fmake was born out of my frustration with having to remember specific
+commands for every project I worked on.
+
+> Why default to 'out/' ?
+'out/' is preferred, as more and more projects are using the 'build'
+directory for other purposes like setting up CI/CD.
+
+See Also
+--------
+* errorformat by reviewdog

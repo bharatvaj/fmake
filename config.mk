@@ -1,6 +1,20 @@
-VERSION = 0.1.6
+VERSION = 0.2.3
 
-$(CC)_CFLAGS = -DFMAKE_VERSION=\"$(VERSION)\" -Wall -Wextra -g
-cl_CFLAGS = /DFMAKE_VERSION=\"$(VERSION)\" /Zi
-
+# nmake \
+!ifndef 0 # \
+CFLAGS = /DFMAKE_VERSION=\"$(VERSION)\"  # \
+!if "$(type)" == "release" # \
+CFLAGS = $(CFLAGS) /ZI /DNDEBUG /O2 # \
+!else # \
+CFLAGS = $(CFLAGS) /Zi # \
+!endif # \
+RM=del # \
+!else
+type?=debug
+debugCFLAGS = -g
+releaseCFLAGS = -O2
+CFLAGS ?= -DFMAKE_VERSION=\"$(VERSION)\" -Wall -Wextra $($(type)CFLAGS)
 PREFIX = /usr/local
+# \
+!endif
+
