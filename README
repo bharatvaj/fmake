@@ -33,16 +33,15 @@ fmake automatically understands the following(and many more) sequences,
 and tries to run it one after the other
 
     $ cmake -Bout .
-    $ cd out
-    $ make
+    $ cmake --build out
 
     ----------(vs)----------
 
     $ fmake # You only have to type fmake!
     ++ cmake -Bout
-        ...
+    ...
     ++ cmake --build out
-        ...
+    ...
 
 fmake can be forced to re-run the generator using `fmake -2`
 
@@ -64,12 +63,35 @@ MSVC,
 Additionally 'type=release' can be passed to build as release.
 Default is debug.
 
+config.h
+--------
+config.h is a simple C header file, that contains a X macro which maps out the
+file to look for and the build command that understands the matched file.
+
+All entries have a level, which fmake utilizes to select a build methodology to
+use when multiple types are found in the same folder.
+
+An example would be GNU autotools,
+
+   file            level
+   configure.ac      3
+   configure         2
+   Makefile          1
+
+    $ ls
+    configure configure.ac src.c Makefile
+    $ fmake
+
+Here since the Makefile has the lowest level of 1, `make` is invoked.
+If you decide to delete the Makefile, `sh configure` is invoked, as `configure`
+is the next lowest level of value 2.
+
 FAQ
 ---
 > Why?
 "People disagree on priorities and therefore, you can't create
 the One & Only build system to end all other build systems."
-                                                - jasode (HN User)
+                                                - jasode (a HN user)
 
 fmake was born out of frustration with having to remember specific build
 commands for different software projects.
