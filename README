@@ -1,11 +1,11 @@
 fmake
 =====
- ______________________________ 
-| > C:\AndroidApp\        - o x|
-|------------------------------|
-| $ fmake                      |
-| ++ gradle buildDebug         |
-!______________________________!
+ _______________________________
+| > C:\AndroidApp\        - o x |
+|-------------------------------|
+| $ fmake                       |
+| ++ gradle buildDebug          |
+!_______________________________!
 
 fmake is a tool that brings `make`s interface to almost any build system.
 
@@ -32,16 +32,17 @@ Build Chains
 fmake automatically understands the following(and many more) sequences,
 and tries to run it one after the other
 
-	$ cmake -Bout .
-	$ cd out
-	$ make
+    $ cmake -Bout .
+    $ cd out
+    $ make
 
---------(vs)----------
+    ----------(vs)----------
 
-    $ fmake    ------------------=> [ You only have to type fmake! ]
+    $ fmake # You only have to type fmake!
     ++ cmake -Bout
         ...
     ++ cmake --build out
+        ...
 
 fmake can be forced to re-run the generator using `fmake -2`
 
@@ -64,14 +65,21 @@ Additionally 'type=release' can be passed to build as release.
 Default is debug.
 
 FAQ
-----
-> Why ?
-fmake was born out of my frustration with having to remember specific
-commands for every project I worked on.
+---
+> Why?
+"People disagree on priorities and therefore, you can't create
+the One & Only build system to end all other build systems."
+                                                - jasode (HN User)
 
-> Why default to 'out/' ?
-'out/' is preferred, as more and more projects are using the 'build'
-directory for other purposes like setting up CI/CD.
+fmake was born out of frustration with having to remember specific build
+commands for different software projects.
+
+> Why not use 'build/' instead of 'out/' as fallback default?
+Using 'build/' for storing build artifacts is not preferrable for two reasons,
+1. Some build systems use 'BUILD' as their manifest file, making it impossible
+   to use 'build/' as output directory in case-insensitive file systems
+2. More and more projects are using the 'build' directory for various repo
+   specific tasks such as setting up CI or maintianing editor configurations.
 
 See Also
 --------
