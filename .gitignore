@@ -1,1 +1,9 @@
 fmake
+
+*.o
+*.obj
+
+*.exe
+*.pdb
+*.ilk
+tags

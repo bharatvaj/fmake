@@ -1,11 +1,5 @@
 include config.mk
 
-# not nmake \
-!ifdef 0
-.DEFAULT_GOAL:=fmake
-# \
-!endif
-
 SOURCE = fmake.c config.h
 
 fmake.exe: $(SOURCE)
@@ -21,6 +15,11 @@ install: fmake
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
 	cp -f fmake $(DESTDIR)$(PREFIX)/bin
 	chmod 755 $(DESTDIR)$(PREFIX)/bin/fmake
+
+format:
+	$(EXPORT) VERSION_CONTROL=none
+	indent -kr -ppi 0 -il 0 -psl --use-tabs -ts4 -br -brs -ce -cli0 *.c *.h
+	dos2unix *.c *.h
 
 test:
 	@./fmake ENABLE_DEBUG=1
