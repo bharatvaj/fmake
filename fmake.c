@@ -58,14 +58,14 @@ char *targets[256];
 size_t targets_len = 0;
 
 static short should_execute_commands = 1;	/* if 0 commands will be printed to stdout */
-static short pref_level_requested = 1;	/* -1 indicates no level requested */
-static short pref_is_verbose = 0;
+static short opt_level_requested = 1;	/* -1 indicates no level requested */
+static short opt_is_verbose = 0;
 
 char *errormsg;
 size_t errormsg_len;
 
 #define info(...) \
-	if (pref_is_verbose) { \
+	if (opt_is_verbose) { \
 		fprintf(stderr, "fmake: " __VA_ARGS__); \
 	}
 
@@ -142,7 +142,7 @@ check_files(int maker_i)
 
 		info("%s\n", maker.filename);
 	} while (++maker_i < makers_len
-			 || makers[maker_i].level <= pref_level_requested);
+			 || makers[maker_i].level <= opt_level_requested);
 
 	if (maker_i == makers_len)
 		maker_i = 0;
@@ -384,7 +384,8 @@ main(int argc, char *argv[])
 			case '1':
 			case '2':
 			case '3':
-				pref_level_requested = atoi(&argv[argi][1]);
+			case '4':
+				opt_level_requested = atoi(&argv[argi][1]);
 				break;
 			case 'N':
 				should_execute_commands = 0;
@@ -394,7 +395,7 @@ main(int argc, char *argv[])
 				return 0;
 				break;
 			case 'D':
-				pref_is_verbose = 1;
+				opt_is_verbose = 1;
 				break;
 			case '?':
 				fmake_usage(0);
@@ -419,7 +420,7 @@ FMAKE_AFTER_ARG_CHECK:
 #endif
 
 	/* foward through levels if requested */
-	while (makers[++argi].level < pref_level_requested);
+	while (makers[++argi].level < opt_level_requested);
 
 	maker = makers[check_files(argi)];
 

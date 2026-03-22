@@ -27,7 +27,7 @@ const char *shake_argmap[] =
 	"-with-rtsopts=-I0", "-outputdir=_shake", "-o", "_shake/build"
 };
 
-/*X(level type operation           lookup name         cmd               cmd args) opt chain */
+/*{ X(level, type, operation,           lookup name,         cmd,               cmd args | "") opt chain }*/
 #define BUILD_SYSTEMS \
 { X(1, FM_FIL,               0     , "Makefile"       , "make", "") },\
 { X(1, FM_FIL,               0     , "makefile"       , "make", "")  },\
@@ -63,7 +63,8 @@ const char *shake_argmap[] =
 { X(3, FM_FIL,               0   , "CMakePresets.json", "cmake"            , "--preset", "default")  },\
 { X(3, FM_FIL,               0     , "APKBUILD"       , "abuild"           , "-r")  },\
 { X(3, FM_FIL,               0     , "PKGBUILD"       , "makepkg"          , "-i")} , \
-{ X(3, FM_FIL,               0     , "Shakefile.hs"   , "ghc"), NULL, U(shake_argmap)}
+{ X(3, FM_FIL,               0     , "Shakefile.hs"   , "ghc", ""), NULL, U(shake_argmap)}, \
+{ X(3, FM_FIL,               0     , "Earthfile"      , "earthly", "") },
 
 static const maker_config_t makers[] = {
 	BUILD_SYSTEMS
