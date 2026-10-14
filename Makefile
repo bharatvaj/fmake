@@ -3,7 +3,7 @@ include config.mk
 SOURCE = fmake.c config.h
 
 fmake.exe: $(SOURCE)
-	cl /nologo $(CFLAGS) fmake.c
+	cl /nologo /DFMAKE_VERSION=\"$(VERSION)\" fmake.c
 
 fmake: $(SOURCE)
 	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) fmake.c
