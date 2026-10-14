@@ -1,10 +1,15 @@
 /* See LICENSE file for copyright and license details. */
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #ifdef _WIN32
 #include <windows.h>
 #include <process.h>
+#include <direct.h>
+#include <io.h>
+#define chdir _chdir
+#define access _access
 #else
 #include <unistd.h>
 #include <dirent.h>
@@ -72,59 +77,51 @@ size_t errormsg_len;
 #define errprint(...) \
 		fprintf(stderr, "fmake: " __VA_ARGS__);
 
-inline int
+static int
 is_file_present(short filetype, const char *name, size_t name_len)
 {
+	(void) name_len;
 	switch (filetype) {
 #ifdef _WIN32
 	case FM_FIL:
 	case FM_EXT:
 		dir = FindFirstFile(name, &entry);
-		if (dir == INVALID_HANDLE_VALUE) {
+		if (dir == INVALID_HANDLE_VALUE)
 			return -1;
-		}
-		goto FMAKE_FOUND_MATCH;
-		break;
+		FindClose(dir);
+		return 0;
 #else
-	case FMAKE_FIL:
+	case FM_FIL:
+		return access(name, 0) == 0 ? 0 : -1;
+	case FM_EXT: {
+		const char *ext = name[0] == '*' && name[1] == '.' ? name + 2 : name;
+		dir = opendir(".");
+		if (dir == NULL)
+			return -1;
 		while ((entry = readdir(dir)) != NULL) {
-			if (entry->d_type == DT_REG || entry->d_type == DT_LNK) {
-				if (strcmp(entry->d_name, name) == 0) {
-					goto FMAKE_FOUND_MATCH;
-				}
-			}
+			char *dot = strrchr(entry->d_name, '.');
+			if (dot && strcmp(dot + 1, ext) == 0)
+				goto FMAKE_FOUND_MATCH;
 		}
-		break;
-	case FM_EXT:
-		while ((entry = readdir(dir)) != NULL) {
-			if (entry->d_type == DT_REG || entry->d_type == DT_LNK) {
-				char *dot = strrchr(entry->d_name, '.');
-				if (dot && strcmp(dot + 1, name) == 0) {
-					goto FMAKE_FOUND_MATCH;
-				}
-			}
-		}
-		break;
-#endif
-	case FM_DIR:
-		if (access(name, 0) == 0) {
-			goto FMAKE_FOUND_MATCH;
-		}
+		closedir(dir);
 		break;
 	}
-	return -1;
-FMAKE_FOUND_MATCH:
-#ifndef _WIN32
-	if (dir)
-		closedir(dir);
 #endif
+	case FM_DIR:
+		return access(name, 0) == 0 ? 0 : -1;
+	}
+	return -1;
+#ifndef _WIN32
+FMAKE_FOUND_MATCH:
+	closedir(dir);
 	return 0;
+#endif
 }
 
-char *
-get_val(char **arr, size_t arr_len, char *key)
+const char *
+get_val(const char **arr, size_t arr_len, const char *key)
 {
-	for (int i = 0; i < arr_len; i += 2) {
+	for (size_t i = 0; i < arr_len; i += 2) {
 		if (strcmp(key, arr[i]) == 0)
 			return arr[i + 1];
 	}
@@ -142,7 +139,7 @@ check_files(int maker_i)
 
 		info("%s\n", maker.filename);
 	} while (++maker_i < makers_len
-			 || makers[maker_i].level <= opt_level_requested);
+			 && makers[maker_i].level <= opt_level_requested);
 
 	if (maker_i == makers_len)
 		maker_i = 0;
@@ -157,6 +154,7 @@ process_build(int argc, char *argv[])
 #ifdef _WIN32
 	STARTUPINFO si = { 0 };
 	PROCESS_INFORMATION pi = { 0 };
+	DWORD exit_code;
 #endif
 	int tmpint;
 	size_t cmdargs_len = 0;
@@ -184,40 +182,34 @@ process_build(int argc, char *argv[])
 	}
 	// FIXME Make copies only if input_token is given
 	/* Transform arg values of type=release => /Configuration:Release etc */
-	char **args = (char **) malloc(maker.args_len + input_toks_len);
-	int args_len = maker.args_len;
+	char **args = calloc(maker.args_len + input_toks_len + 1, sizeof(*args));
+	int args_len = 0;
 
-	for (int i = 0; i < args_len && maker.args[i] != NULL; i++) {
-		size_t len_s = strlen(maker.args[i]) + 1;
-		args[i] = (char *) malloc(len_s);
-		strncpy(args[i], maker.args[i], len_s);
+	for (int i = 0; i < maker.args_len && maker.args[i] != NULL; i++) {
+		if (maker.args[i][0] != '\0')
+			args[args_len++] = (char *) maker.args[i];
 	}
 	/* maker.cmd == "cmake" */
 	/*
 	 * if there is value in input_toks, then try to convert it
 	 * if not possible, use the original values
 	 */
-	char *newval;
-	for (int i = 0; i < input_toks_len && input_toks[i] != NULL; i++) {
+	const char *key;
+	const char *val;
+	for (size_t i = 0; i < input_toks_len && input_toks[i] != NULL; i++) {
 		/* errprint("%d/%zd: %s\n", i, input_toks_len, input_toks[i]); */
-		if (maker.argmap_len) {
-			/* errprint("input_toks[%d]= %s\n", i, input_toks[i]); */
-			if (newval =
-				get_val(maker.argmap, maker.argmap_len, input_toks[i])) {
-				/* set the string 'type' => /configuration: to args[args_len] */
-				args[args_len] = newval;
-				if (input_toks[i + 1]
-					&& (newval =
-						get_val(maker.argmap, maker.argmap_len,
-								input_toks[i + 1]))) {
-					/* append value part to args[args_len] */
-					args[args_len] = strcat(args[args_len], newval);
-				} else {
-					// append debug values
-				}
-				args_len++;
-				continue;
+		if (maker.argmap_len &&
+			(key = get_val(maker.argmap, maker.argmap_len, input_toks[i]))) {
+			val = input_toks[i + 1] ?
+				get_val(maker.argmap, maker.argmap_len, input_toks[i + 1]) : NULL;
+			if (val) {
+				args[args_len] = malloc(strlen(key) + strlen(val) + 1);
+				sprintf(args[args_len], "%s%s", key, val);
+			} else {
+				args[args_len] = (char *) key;
 			}
+			args_len++;
+			continue;
 		}
 		/* errprint("uhh: argv[input_toks_i[%d]] = %s\n", i, argv[input_toks_i[i]]); */
 		/* just append the values from argv */
@@ -291,21 +283,18 @@ process_build(int argc, char *argv[])
 
 	WaitForSingleObject(pi.hProcess, INFINITE);
 
-	if (GetExitCodeProcess(pi.hProcess, &status) == 0) {
-		errprint("fatal: cannot get process status for %d",
-				 pi.dwProcessId);
+	if (GetExitCodeProcess(pi.hProcess, &exit_code) == 0) {
+		errprint("fatal: cannot get process status for %lu",
+				 (unsigned long) pi.dwProcessId);
 		return -1;
 	}
+	status = (int) exit_code;
 
 	CloseHandle(pi.hProcess);
 	CloseHandle(pi.hThread);
 
 #else
-	if (*maker.args[0] == '\0') {
-		status = execlp(maker.cmd, maker.cmd, '\0', (void *) 0);
-	} else {
-		status = execvp(maker.cmd, maker.args);
-	}
+	status = execvp(maker.cmd, args);
 #endif
 
 	if (status != 0) {
@@ -401,24 +390,24 @@ main(int argc, char *argv[])
 				fmake_usage(0);
 				break;
 			}
-		} else if (input_toks[input_toks_len] = strtok(argv[argi], "=")) {
-			input_toks_i[input_toks_len++] = argi;
-			input_toks[input_toks_len] = strtok(NULL, "=");
 		} else {
-			targets[targets_len++] = argv[argi];
+			char *eq = strchr(argv[argi], '=');
+			if (eq) {
+				size_t key_len = eq - argv[argi];
+				input_toks[input_toks_len] = malloc(key_len + 1);
+				memcpy(input_toks[input_toks_len], argv[argi], key_len);
+				input_toks[input_toks_len][key_len] = '\0';
+				input_toks_i[input_toks_len++] = argi;
+				input_toks[input_toks_len] = eq + 1;
+			} else {
+				input_toks_i[input_toks_len] = argi;
+				input_toks[input_toks_len++] = argv[argi];
+			}
 		}
 	}
 
 FMAKE_AFTER_ARG_CHECK:
 	argi = -1;
-#ifndef _WIN32
-	dir = opendir("./");
-	if (dir == NULL) {
-		perror("fmake");
-		return -1;
-	}
-#endif
-
 	/* foward through levels if requested */
 	while (makers[++argi].level < opt_level_requested);
 

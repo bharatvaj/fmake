@@ -22,6 +22,6 @@ format:
 	dos2unix *.c *.h
 
 test:
-	@./fmake ENABLE_DEBUG=1
+	@./fmake -N ENABLE_DEBUG=1
 
 .PHONY: test clean
