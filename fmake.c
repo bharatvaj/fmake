@@ -49,7 +49,14 @@ typedef struct maker_config {
 	int argmap_len;
 } maker_config_t;
 
+#if defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#endif
 #include "config.h"
+#if defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
 
 static const size_t makers_len = sizeof(makers) / sizeof(maker_config_t);
 static maker_config_t maker;
@@ -129,7 +136,7 @@ get_val(const char **arr, size_t arr_len, const char *key)
 }
 
 int
-check_files(int maker_i)
+check_files(size_t maker_i)
 {
 	do {
 		maker = makers[maker_i];
@@ -143,7 +150,7 @@ check_files(int maker_i)
 
 	if (maker_i == makers_len)
 		maker_i = 0;
-	return maker_i;
+	return (int) maker_i;
 }
 
 int
@@ -156,7 +163,6 @@ process_build(int argc, char *argv[])
 	PROCESS_INFORMATION pi = { 0 };
 	DWORD exit_code;
 #endif
-	int tmpint;
 	size_t cmdargs_len = 0;
 
 	if (should_execute_commands && (maker.operation & FM_MKD)) {
@@ -167,6 +173,7 @@ process_build(int argc, char *argv[])
 				break;
 			case ERROR_PATH_NOT_FOUND:
 				errprint("Cannot create 'out' directory\n");
+				break;
 			default:
 				return -1;
 			}
@@ -227,7 +234,7 @@ process_build(int argc, char *argv[])
 		fprintf(fd, "++ ");
 	for (size_t args_i = 0; args_i < args_len && args[args_i] != NULL;
 		 args_i++) {
-		tmpint = strlen(args[args_i]);
+		int tmpint = (int) strlen(args[args_i]);
 		/* +1 for space */
 		cmdargs_len += tmpint + 1;
 		fprintf(fd, "%.*s ", tmpint, args[args_i]);
@@ -330,7 +337,7 @@ fmake_usage(int status)
 		"-N", "Don't actually run any build commands; just print them.",
 		"-V", "Print the version number of make and exit."
 	};
-	for (int i = 0; i < sizeof(opt_array) / sizeof(char **); i += 2) {
+	for (size_t i = 0; i < sizeof(opt_array) / sizeof(char **); i += 2) {
 		printf("  %-27s %s\n", opt_array[i], opt_array[i + 1]);
 	}
 	exit(status);
@@ -353,7 +360,7 @@ main(int argc, char *argv[])
 					maker = makers[argi];
 					printf("%-5d %-5d %-25s %-20s", maker.level,
 						   maker.filetype, maker.filename, maker.cmd);
-					for (size_t i = 1; i < maker.args_len; i++)
+					for (int i = 1; i < maker.args_len; i++)
 						printf("%s ", maker.args[i]);
 					printf("\n");
 				}
