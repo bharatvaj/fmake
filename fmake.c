@@ -58,16 +58,15 @@ typedef struct maker_config {
 #pragma GCC diagnostic pop
 #endif
 
-static const size_t makers_len = sizeof(makers) / sizeof(maker_config_t);
+static const int makers_len = sizeof(makers) / sizeof(maker_config_t);
 static maker_config_t maker;
 
-// TODO FIX Possible CVE
 char *input_toks[256];
 int input_toks_i[256];
-size_t input_toks_len = 0;
+int input_toks_len = 0;
 
 char *targets[256];
-size_t targets_len = 0;
+int targets_len = 0;
 
 static short should_execute_commands = 1;	/* if 0 commands will be printed to stdout */
 static short opt_level_requested = 1;	/* -1 indicates no level requested */
@@ -85,9 +84,8 @@ size_t errormsg_len;
 		fprintf(stderr, "fmake: " __VA_ARGS__);
 
 static int
-is_file_present(short filetype, const char *name, size_t name_len)
+is_file_present(short filetype, const char *name)
 {
-	(void) name_len;
 	switch (filetype) {
 #ifdef _WIN32
 	case FM_FIL:
@@ -126,9 +124,9 @@ FMAKE_FOUND_MATCH:
 }
 
 const char *
-get_val(const char **arr, size_t arr_len, const char *key)
+get_val(const char **arr, int arr_len, const char *key)
 {
-	for (size_t i = 0; i < arr_len; i += 2) {
+	for (int i = 0; i < arr_len; i += 2) {
 		if (strcmp(key, arr[i]) == 0)
 			return arr[i + 1];
 	}
@@ -136,12 +134,11 @@ get_val(const char **arr, size_t arr_len, const char *key)
 }
 
 int
-check_files(size_t maker_i)
+check_files(int maker_i)
 {
 	do {
 		maker = makers[maker_i];
-		if (is_file_present(maker.filetype,
-							maker.filename, strlen(maker.filename)) == 0)
+		if (is_file_present(maker.filetype, maker.filename) == 0)
 			break;
 
 		info("%s\n", maker.filename);
@@ -150,7 +147,7 @@ check_files(size_t maker_i)
 
 	if (maker_i == makers_len)
 		maker_i = 0;
-	return (int) maker_i;
+	return maker_i;
 }
 
 int
@@ -203,7 +200,7 @@ process_build(int argc, char *argv[])
 	 */
 	const char *key;
 	const char *val;
-	for (size_t i = 0; i < input_toks_len && input_toks[i] != NULL; i++) {
+	for (int i = 0; i < input_toks_len && input_toks[i] != NULL; i++) {
 		/* errprint("%d/%zd: %s\n", i, input_toks_len, input_toks[i]); */
 		if (maker.argmap_len &&
 			(key = get_val(maker.argmap, maker.argmap_len, input_toks[i]))) {
@@ -232,7 +229,7 @@ process_build(int argc, char *argv[])
 #ifndef _WIN32
 	if (should_execute_commands)
 		fprintf(fd, "++ ");
-	for (size_t args_i = 0; args_i < args_len && args[args_i] != NULL;
+	for (int args_i = 0; args_i < args_len && args[args_i] != NULL;
 		 args_i++) {
 		int tmpint = (int) strlen(args[args_i]);
 		/* +1 for space */
@@ -337,7 +334,8 @@ fmake_usage(int status)
 		"-N", "Don't actually run any build commands; just print them.",
 		"-V", "Print the version number of make and exit."
 	};
-	for (size_t i = 0; i < sizeof(opt_array) / sizeof(char **); i += 2) {
+	int opt_array_len = sizeof(opt_array) / sizeof(char **);
+	for (int i = 0; i < opt_array_len; i += 2) {
 		printf("  %-27s %s\n", opt_array[i], opt_array[i + 1]);
 	}
 	exit(status);
@@ -356,7 +354,7 @@ main(int argc, char *argv[])
 			case 'l':
 				// TODO show better listing
 				/* list supported build systems */
-				for (size_t argi = 0; argi < makers_len; argi++) {
+				for (int argi = 0; argi < makers_len; argi++) {
 					maker = makers[argi];
 					printf("%-5d %-5d %-25s %-20s", maker.level,
 						   maker.filetype, maker.filename, maker.cmd);
@@ -399,6 +397,10 @@ main(int argc, char *argv[])
 			}
 		} else {
 			char *eq = strchr(argv[argi], '=');
+			if (input_toks_len + (eq != NULL) >= 256) {
+				errprint("too many arguments\n");
+				return -1;
+			}
 			if (eq) {
 				size_t key_len = eq - argv[argi];
 				input_toks[input_toks_len] = malloc(key_len + 1);
