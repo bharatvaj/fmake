@@ -38,6 +38,7 @@ const char *shake_argmap[] =
 { X(1, FM_FIL,               0     , "Tupfile"        , "tup", "")  },\
 { X(1, FM_FIL,               0     , "make"           , "sh"               , "make")  },\
 { X(1, FM_FIL,               0     , "build.sh"       , "sh"               , "build.sh")  },\
+{ X(1, FM_FIL,               0     , "build.xml"      , "ant"              , "build")  },\
 { X(1, FM_FIL,               0     , "Vagrantfile"   , "vagrant" , "up")  },\
 { X(1, FM_FIL,               0     , "Gruntfile"      , "grunt", "")  },\
 { X(1, FM_FIL,               0     , "build.ninja"    , "ninja", "")  },\
@@ -46,12 +47,18 @@ const char *shake_argmap[] =
 { X(1, FM_FIL,               0     , "nob.c"          , "cc"               , "./nob.c"      , "-o"      , "nob")  },\
 { X(1, FM_FIL,               0     , "nobuild"        , "./nobuild"        , "")  },\
 { X(1, FM_FIL,               0     , "nobuild.c"      , "cc"               , "./nobuild.c"  , "-o"      , "nobuild")  },\
-{ X(1, FM_FIL,               0     , "packages.json"  , "npm"              , "install")  },\
-{ X(1, FM_DIR,               0     , "node_modules"   , "npm"              , "run")  },\
 { X(1, FM_FIL,               0     , "Cargo.toml"     , "cargo"            , "build")  },\
+{ X(1, FM_FIL,               0     , "go.mod"         , "go"               , "build"        , "./...")  },\
+{ X(1, FM_FIL,               0     , "composer.json"  , "composer"         , "install")  },\
 { X(1, FM_FIL,               0     , "setup.py"       , "pip"              , "install"      , ".")  },\
 { X(1, FM_FIL,               0     , "gradlew.bat"    , "cmd"              , "/c", "gradlew.bat")  },\
 { X(1, FM_FIL,               0     , "gradlew"        , "sh"               , "gradlew")  },\
+{ X(1, FM_FIL,               0     , "build.gradle"   , "gradle"           , "build")  },\
+{ X(1, FM_FIL,               0     , "build.gradle.kts", "gradle"          , "build")  },\
+{ X(1, FM_FIL,               0     , "pnpm-lock.yaml" , "pnpm"             , "install")  },\
+{ X(1, FM_FIL,               0     , "yarn.lock"      , "yarn"             , "install")  },\
+{ X(1, FM_FIL,               0     , "package.json"   , "npm"              , "install")  },\
+{ X(1, FM_DIR,               0     , "node_modules"   , "npm"              , "run")  },\
 { X(1, FM_EXT,               0     , "*.pro"          , "qmake")  },\
 { X(1, FM_EXT,               0     , "*.sln"          , "msbuild", ""), NULL, U(msbuild_argmap)},\
 { X(1, FM_EXT,               0     , "*.vcxproj"      , "msbuild", "") },\
